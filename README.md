@@ -2,17 +2,17 @@
 
 Tengo que desarrollar una aplicación para una línea de producción de paneles de puerta, específicamente para el último puesto de la misma (revisión pre-calidad).
 
-Actualmente, la línea de producción utiliza las siguientes convenciones: un número de secuencia para identificar el vehículo, y un código adicional para identificar el tipo de panel que se está trabajando. El número de secuencia es un número del 1 al 999, y el código del panel es FRLH (Front Left Hand), FRRH (Front Right Hand), RRLH (Rear Left Hand), RRHH (Rear Right Hand).
+Actualmente, la línea de producción utiliza las siguientes convenciones: un número de secuencia para identificar el vehículo, y un código adicional para identificar el tipo de panel que se está trabajando. El número de secuencia es un número del 1 al 999, y el código del panel es FRLH (Front Left Hand), FRRH (Front Right Hand), RRLH (Rear Left Hand), RRRH (Rear Right Hand).
 
-La línea de producción siempre utiliza números de secuencia consecutivos, y dentro de una misma secuencia, se trabajan primero los paneles delanteros (FRLH y FRRH) y luego los paneles traseros (RRLH y RRHH). El vehículo puede ser cabina simple o doble, por lo que no todas las secuencias tienen paneles traseros. Existen múltiples estilos de paneles, pero todos los paneles de una misma secuencia siempre utilizan el mismo estilo.
+La línea de producción siempre utiliza números de secuencia consecutivos, y dentro de una misma secuencia, se trabajan primero los paneles delanteros (FRLH y FRRH) y luego los paneles traseros (RRLH y RRRH). El vehículo puede ser cabina simple o doble, por lo que no todas las secuencias tienen paneles traseros. Existen múltiples estilos de paneles, pero todos los paneles de una misma secuencia siempre utilizan el mismo estilo.
 
 El trabajo se realiza en dos líneas paralelas (A y B) que trabajan simultáneamente, cada una con su propio operario. Sin embargo, ambas trabajan las mismas secuencias (es decir, entre las dos líneas se trabajan todos los paneles para un mismo vehículo): por ejemplo, mientras un operario trabaja un panel LH (Left Hand), el otro operario trabaja un panel RH (Right Hand).
 
 En la aplicación debe ser posible configurar, para cada línea (A o B), qué paneles se desea trabajar. Esto brinda flexibilidad:
 
 - Hoy la línea A produce FRLH y RRRH, mientras que la línea B produce FRRH y RRLH.
-- Mañana cambia la forma de trabajar, y la línea A produce FRLH y RRLH, mientras que la línea B produce FRRH y RRHH.
-- La semana que viene se rompe la línea B, y la línea A debe producir todos los paneles (FRLH, FRRH, RRLH y RRHH).
+- Mañana cambia la forma de trabajar, y la línea A produce FRLH y RRLH, mientras que la línea B produce FRRH y RRRH.
+- La semana que viene se rompe la línea B, y la línea A debe producir todos los paneles (FRLH, FRRH, RRLH y RRRH).
 
 Como se explico antes, si hubieran demoras en la producción, un superior puede decidir que se utilicen paneles del stock de seguridad, omitiendo secuencias en la línea de producción. Por ejemplo, supongamos que al comienzo del día se solicitó producción de las secuencias 1, 2, 3, 4 y 5, pero debido a un retraso, el superior decidió que los paneles correspondientes a las secuencias 3 y 4 se tomen del stock de seguridad. Los pasos a seguir por los operarios serían los siguientes:
 
