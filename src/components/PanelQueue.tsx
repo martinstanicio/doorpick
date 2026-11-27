@@ -24,15 +24,18 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
       ) : (
         <div className="flex flex-col gap-2.5">
           {/* Card 0: Active */}
-          <div className="border-4 border-black bg-white p-4 flex flex-col gap-4">
+          <div
+            className={`border-4 border-black p-4 flex flex-col gap-4 ${activePanel.ubicacion === 'STOCK' ? 'bg-[#FFE600]' : 'bg-[#BBF7D0]'
+              }`}
+          >
             <div className="flex items-center justify-between gap-2">
               {mode === 'CORRECT' ? (
-                <div className="inline-flex items-center gap-1.5 text-[#15803D] font-mono text-xs font-bold tracking-wider">
+                <div className="inline-flex items-center gap-1.5 bg-[#15803D] text-white px-2 py-0.5 font-mono text-xs font-bold tracking-wider">
                   <IconCheck size={16} stroke={2.5} />
                   <span>CORRECTO</span>
                 </div>
               ) : mode === 'INCORRECT' ? (
-                <div className="inline-flex items-center gap-1.5 text-[#CC0000] font-mono text-xs font-bold tracking-wider">
+                <div className="inline-flex items-center gap-1.5 bg-[#CC0000] text-white px-2 py-0.5 font-mono text-xs font-bold tracking-wider">
                   <IconAlertTriangle size={16} stroke={2.5} />
                   <span>INCORRECTO</span>
                 </div>
@@ -44,9 +47,9 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
               )}
 
               <span
-                className={`px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider border border-black ${activePanel.ubicacion === 'STOCK'
-                  ? 'bg-[#FFE600] text-black'
-                  : 'bg-white text-black'
+                className={`px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider ${activePanel.ubicacion === 'STOCK'
+                  ? 'bg-black text-[#FFE600]'
+                  : 'border border-black bg-white text-black'
                   }`}
               >
                 {activePanel.ubicacion}
@@ -55,7 +58,7 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
 
             <div className="grid grid-cols-2 gap-4 pt-1 border-t-2 border-black">
               <div className="flex flex-col">
-                <span className="font-mono text-[11px] font-semibold tracking-wider text-neutral-600">
+                <span className="font-mono text-[11px] font-semibold tracking-wider text-black/80">
                   SECUENCIA
                 </span>
                 <span className="font-mono text-3xl font-bold tracking-tight text-black tabular-nums">
@@ -63,7 +66,7 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="font-mono text-[11px] font-semibold tracking-wider text-neutral-600">
+                <span className="font-mono text-[11px] font-semibold tracking-wider text-black/80">
                   CÓDIGO PANEL
                 </span>
                 <span className="font-mono text-3xl font-bold tracking-tight text-black">

@@ -55,7 +55,7 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
     const isStock = activePanel.ubicacion === 'STOCK';
     return (
       <div
-        className={`flex-1 p-8 flex flex-col items-center justify-center text-center gap-6 ${isStock ? 'bg-[#FFE600] text-black' : 'bg-white text-black'
+        className={`flex-1 p-8 flex flex-col items-center justify-center text-center gap-6 ${isStock ? 'bg-[#FFE600] text-black' : 'bg-[#BBF7D0] text-black'
           }`}
       >
         <span className="font-sans text-5xl sm:text-7xl font-bold tracking-tight">
