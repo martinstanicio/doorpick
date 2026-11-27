@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { connection, NextRequest, NextResponse } from 'next/server';
 import { doorPickService } from '@/lib/doorpick-service';
 import { LineId } from '@/lib/types';
 
@@ -10,6 +10,7 @@ function parseLine(value: string | null): LineId | null {
 }
 
 export async function GET(request: NextRequest) {
+  await connection();
   try {
     const lineParam = request.nextUrl.searchParams.get('line');
     const line = parseLine(lineParam);
@@ -21,7 +22,10 @@ export async function GET(request: NextRequest) {
     }
 
     const queue = await doorPickService.getQueueForLine(line);
-    return NextResponse.json(queue, { status: 200 });
+    return NextResponse.json(queue, {
+      status: 200,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('Error en GET /api/panels:', error);
     return NextResponse.json(

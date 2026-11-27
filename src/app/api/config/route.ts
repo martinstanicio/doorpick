@@ -1,12 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { connection, NextRequest, NextResponse } from 'next/server';
 import { doorPickService } from '@/lib/doorpick-service';
 import { validateConfigInput } from '@/lib/qr';
 import { DoorPickConfigInput } from '@/lib/types';
 
 export async function GET() {
+  await connection();
   try {
     const config = await doorPickService.getConfig();
-    return NextResponse.json(config, { status: 200 });
+    return NextResponse.json(config, {
+      status: 200,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('Error en GET /api/config:', error);
     return NextResponse.json(
@@ -37,7 +41,10 @@ export async function PUT(request: NextRequest) {
     }
 
     const saved = await doorPickService.saveConfig(validation.normalized);
-    return NextResponse.json(saved, { status: 200 });
+    return NextResponse.json(saved, {
+      status: 200,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('Error en PUT /api/config:', error);
     return NextResponse.json(

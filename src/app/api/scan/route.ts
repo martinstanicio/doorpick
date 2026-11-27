@@ -37,7 +37,10 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await doorPickService.processQrScan(line as LineId, qr);
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(result, {
+      status: 200,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('Error en POST /api/scan:', error);
     return NextResponse.json(
