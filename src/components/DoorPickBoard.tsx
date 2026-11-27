@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { boardReducer, getVisiblePanels, initialBoardState } from '@/lib/board-state';
 import type { LineId, QueueResponse, ScanResponse } from '@/lib/types';
@@ -18,12 +18,33 @@ function parseLineParam(value: string | null): LineId | null {
   return null;
 }
 
+function readStoredLine(): LineId | null {
+  try {
+    return parseLineParam(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return null;
+  }
+}
+
+function getServerLine(): LineId | null {
+  return null;
+}
+
+function subscribeLineStorage(callback: () => void): () => void {
+  window.addEventListener('storage', callback);
+  return () => window.removeEventListener('storage', callback);
+}
+
 export function DoorPickBoard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlLine = parseLineParam(searchParams.get('linea'));
-
-  const [line, setLine] = useState<LineId>(() => urlLine ?? 'A');
+  const storedLine = useSyncExternalStore(
+    subscribeLineStorage,
+    readStoredLine,
+    getServerLine,
+  );
+  const line: LineId = urlLine ?? storedLine ?? 'A';
   const [state, dispatch] = useReducer(boardReducer, initialBoardState);
 
   const greenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -46,23 +67,11 @@ export function DoorPickBoard() {
     }, GREEN_HOLD_MS);
   }, [clearGreenTimer]);
 
-  // Sync initial line from URL or localStorage
+  // Persist URL line selection to localStorage
   useEffect(() => {
-    if (urlLine) {
-      setLine(urlLine);
-      try {
-        localStorage.setItem(STORAGE_KEY, urlLine);
-      } catch {
-        // ignore storage errors
-      }
-      return;
-    }
-
+    if (!urlLine) return;
     try {
-      const saved = parseLineParam(localStorage.getItem(STORAGE_KEY));
-      if (saved) {
-        setLine(saved);
-      }
+      localStorage.setItem(STORAGE_KEY, urlLine);
     } catch {
       // ignore storage errors
     }
@@ -73,7 +82,6 @@ export function DoorPickBoard() {
       if (nextLine === line) return;
       clearGreenTimer();
       scanBufferRef.current = '';
-      setLine(nextLine);
       dispatch({ type: 'SWITCH_LINE' });
       try {
         localStorage.setItem(STORAGE_KEY, nextLine);
