@@ -138,4 +138,4 @@ Los aspectos configurables de la aplicación deben ser los siguientes.
 
 Configurar la variable de entorno `DB_URL` en `.env` (ver `.env.example`).
 
-Para ejecutar pruebas locales, ejecutar `db/init-dev.sql` en SQL Server para crear la base de datos y las tablas necesarias. Ejecutar el simulador de la línea de producción con `npm run sim` para insertar secuencias periódicamente y exponer QRs escaneables en `http://localhost:4000`.
+Para ejecutar pruebas locales, ejecutar `db/init.sql` en SQL Server para crear la base de datos y las tablas necesarias. Ejecutar el simulador de la línea de producción con `npm run sim` para insertar secuencias periódicamente y exponer QRs escaneables en `http://localhost:4000`.

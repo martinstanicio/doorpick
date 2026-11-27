@@ -245,7 +245,7 @@ async function main() {
   `);
   const { opId, dpId } = tablesRes.recordset[0];
   if (!opId || !dpId) {
-    console.error('Faltan tablas dbo.Orden_Produccion o dbo.DoorPick. Ejecutá primero db/init-dev.sql.');
+    console.error('Faltan tablas dbo.Orden_Produccion o dbo.DoorPick. Ejecutá primero db/init.sql.');
     await pool.close();
     process.exit(1);
   }
