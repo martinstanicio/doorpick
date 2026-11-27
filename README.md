@@ -63,7 +63,7 @@ Dividí la pantalla en 2 secciones: la izquierda muestra la lista de paneles a t
 
 La base de datos a utilizar es Microsoft SQL Server 2022, y la aplicación debe estar desarrollada con Next.js.
 
-Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`. Las columas relevantes de la tabla son ID_OrdenProduccion (entero positivo), Secuencia (entero positivo), Fecha_Proceso, Puesto (las únicas filas relevantes contienen DL01), Estado (0/1), Mano (LH/RH), Posicion (FR/RR).
+Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`. Las columas relevantes de la tabla son ID_OrdenProduccion (entero positivo), Secuencia (entero positivo), Fecha_Proceso, SD (string), Puesto (las únicas filas relevantes contienen DL01), Estado (0/1), Mano (LH/RH), Posicion (FR/RR).
 
 Si el estado es 0, el panel viene de la etapa anterior de la linea de producción. Si el estado es 1, el panel debe ser tomado del stock de seguridad.
 
@@ -72,6 +72,7 @@ SELECT
     [ID_OrdenProduccion],
     [Secuencia],
     [Fecha_Proceso],
+    [SD],
     [Mano],
     [Posicion]
 FROM [TB-L].[dbo].[Orden_Produccion]
@@ -88,6 +89,8 @@ El flujo de ejecución básico de la aplicación consiste en leer `dbo.Orden_Pro
 
 - Si el panel fue tomado de la etapa anterior de la línea de producción, actualizar su estado a 2.
 - Si el panel fue tomado del stock de seguridad, actualizar su estado a 3.
+
+El QR que lee el operario contiene el texto `ID_OrdenProduccion|Secuencia|SD|Posicion|Mano`, por ejemplo "15628|1|D3L|RR|RH". La aplicación debe extraer esta información del QR y compararla con la información de la tabla `dbo.Orden_Produccion` para determinar si el panel escaneado es el correcto.
 
 ---
 
