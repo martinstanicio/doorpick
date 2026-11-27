@@ -66,7 +66,7 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
   };
 
   return (
-    <section className="w-full lg:w-[62%] border-4 border-black bg-white flex flex-col min-h-[460px]">
+    <section className="w-full lg:w-[62%] border-4 border-black bg-white flex flex-col h-full">
       {/* Top Banner */}
       <div
         className={`border-b-4 border-black px-5 py-3 flex items-center justify-between gap-4 font-mono text-base sm:text-lg font-bold tracking-widest ${bannerConfig.bgClass}`}
