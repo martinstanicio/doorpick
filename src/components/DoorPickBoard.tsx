@@ -10,7 +10,7 @@ import { StatusPanel } from './StatusPanel';
 
 const STORAGE_KEY = 'doorpick_line';
 const POLL_INTERVAL_MS = 2500;
-const GREEN_HOLD_MS = 10000;
+const GREEN_HOLD_MS = 5000;
 const SCAN_GAP_RESET_MS = 500;
 
 function parseLineParam(value: string | null): LineId | null {
