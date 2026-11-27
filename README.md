@@ -63,9 +63,25 @@ Dividí la pantalla en 2 secciones: la izquierda muestra la lista de paneles a t
 
 La base de datos a utilizar es Microsoft SQL Server 2022, y la aplicación debe estar desarrollada con Next.js.
 
-Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`; ÚNICAMENTE podés LEER esta tabla, nunca escribir en ella. Las columas relevantes de la tabla son Secuencia (entero positivo), Fecha_Proceso, Puesto (las únicas filas relevantes contienen DL01), Estado (0/1), Mano (LH/RH), Posicion (FR/RR).
+Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`; ÚNICAMENTE podés LEER esta tabla, nunca escribir en ella. Las columas relevantes de la tabla son ID_OrdenProduccion (entero positivo), Secuencia (entero positivo), Fecha_Proceso, Puesto (las únicas filas relevantes contienen DL01), Estado (0/1), Mano (LH/RH), Posicion (FR/RR).
 
 Si el estado es 0, el panel viene de la etapa anterior de la linea de producción. Si el estado es 1, el panel debe ser tomado del stock de seguridad.
 
+```sql
+SELECT 
+    [ID_OrdenProduccion],
+    [Secuencia],
+    [Fecha_Proceso],
+    [Mano],
+    [Posicion]
+FROM [TB-L].[dbo].[Orden_Produccion]
+WHERE Puesto = 'DL01'
+  AND [Fecha_Proceso] > @FECHA_INICIO_EVALUACION
+ORDER BY [Secuencia] ASC;
+```
+
+FECHA_INICIO_EVALUACION es la fecha a partir de la cual se quiere evaluar paneles, una variable que debe ser configurable en la configuración del sistema. Cualquier panel con fecha de proceso anterior a la misma representa producción realizada antes de la implementación del sistema.
 
 Aquellas cosas que necesite la aplicación que no se encuentren en la tabla `dbo.Orden_Produccion`, deberán ser almacenadas en una nueva tabla `dbo.DoorPick`.
+
+El flujo de ejecución básico de la aplicación consiste en leer `dbo.Orden_Produccion` con la query especificada anteriormente, para obtener un listado de tanto los paneles ya procesados como los paneles a procesar (los paneles que interesa mostrar son los 5 siguientes). A medida que el operario toma paneles y los escanea, almacenar su ID_OrdenProduccion en `dbo.DoorPick`, para registrar que ya fue procesado y no debe ser incluído en los paneles a mostrar; también se debe guardar la fuente de ese panel: "linea" si proviene de la etapa anterior de la línea de producción, o "stock" si proviene del stock de seguridad.
