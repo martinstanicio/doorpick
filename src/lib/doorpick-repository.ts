@@ -212,7 +212,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
         [Mano],
         [Posicion]
       FROM [dbo].[Orden_Produccion]
-      WHERE [Puesto] = 'DL01'
+      WHERE [Puesto] IN ('DL01', 'DR01')
         AND [Fecha_Proceso] > CAST(@fechaInicio AS DATETIME2(0))
         AND [Estado] IN (0, 1)
         AND (${panelClauses.join(' OR ')})

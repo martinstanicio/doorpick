@@ -69,7 +69,7 @@ erDiagram
         int Secuencia "1..999"
         datetime Fecha_Proceso
         varchar SD
-        varchar Puesto "DL01 | ..."
+        varchar Puesto "DL01 | DR01 | ..."
         int Estado "0 (Dobladora pendiente) | 1 (Stock) | 2 (Dobladora OK) | 3 (Stock OK)"
         varchar Mano "LH | RH"
         varchar Posicion "FR | RR"
@@ -88,7 +88,7 @@ SELECT
     [Mano],
     [Posicion]
 FROM [dbo].[Orden_Produccion]
-WHERE [Puesto] = 'DL01'
+WHERE [Puesto] IN ('DL01', 'DR01')
   AND [Fecha_Proceso] > @FECHA_INICIO_EVALUACION
   AND [Estado] IN (0, 1)
 ORDER BY

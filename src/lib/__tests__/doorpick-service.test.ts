@@ -102,7 +102,7 @@ class InMemoryDoorPickRepository implements DoorPickRepository {
       .filter((row) => {
         const code = `${row.posicion}${row.mano}` as PanelCode;
         return (
-          row.puesto === 'DL01' &&
+          (row.puesto === 'DL01' || row.puesto === 'DR01') &&
           row.fechaProceso > fechaInicio &&
           (row.estado === 0 || row.estado === 1) &&
           allowed.has(code)
@@ -171,7 +171,7 @@ describe('doorPickService', () => {
   });
 
   describe('getQueueForLine', () => {
-    it('filters by Puesto = DL01, Fecha_Proceso > Fecha_Inicio_Evaluacion, and Estado IN (0, 1)', async () => {
+    it('filters by Puesto IN (DL01, DR01), Fecha_Proceso > Fecha_Inicio_Evaluacion, and Estado IN (0, 1)', async () => {
       repo.seedOrden({
         idOrdenProduccion: 1,
         puesto: 'DL02',
@@ -181,6 +181,16 @@ describe('doorPickService', () => {
         estado: 0,
         posicion: 'FR',
         mano: 'LH',
+      });
+      repo.seedOrden({
+        idOrdenProduccion: 5,
+        puesto: 'DR02',
+        secuencia: 10,
+        fechaProceso: '2026-11-27T08:05:00',
+        sd: 'SD-5',
+        estado: 0,
+        posicion: 'FR',
+        mano: 'RH',
       });
       repo.seedOrden({
         idOrdenProduccion: 2,
@@ -212,10 +222,21 @@ describe('doorPickService', () => {
         posicion: 'FR',
         mano: 'LH',
       });
+      repo.seedOrden({
+        idOrdenProduccion: 6,
+        puesto: 'DR01',
+        secuencia: 14,
+        fechaProceso: '2026-11-27T08:06:00',
+        sd: 'SD-6',
+        estado: 1,
+        posicion: 'FR',
+        mano: 'RH',
+      });
 
       const queue = await service.getQueueForLine('A');
-      expect(queue.panels.map((p) => p.idOrdenProduccion)).toEqual([4]);
+      expect(queue.panels.map((p) => p.idOrdenProduccion)).toEqual([4, 6]);
       expect(queue.panels[0].ubicacion).toBe('DOBLADORA');
+      expect(queue.panels[1].ubicacion).toBe('STOCK');
     });
 
     it('orders by Fecha_Proceso ASC (handling 999 -> 1 secuencia wrap-around) and FR before RR tie-breaker', async () => {

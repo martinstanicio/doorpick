@@ -186,7 +186,7 @@ const HTML_PAGE = `<!DOCTYPE html>
         const res = await fetch('/api/qrs', { cache: 'no-store' });
         const data = await res.json();
         document.getElementById('meta').textContent =
-          'Pendientes totales en DL01: ' + data.totalPending + ' / máx auto: ' + data.maxPending + ' · Intervalo: ' + data.interval + 's';
+          'Pendientes totales (DL01/DR01): ' + data.totalPending + ' / máx auto: ' + data.maxPending + ' · Intervalo: ' + data.interval + 's';
         document.getElementById('status-pill').textContent = data.autoEnabled ? 'AUTO: ACTIVO' : 'AUTO: PAUSADO';
         document.getElementById('toggle-btn').textContent = data.autoEnabled ? 'Pausar Auto' : 'Reanudar Auto';
         document.getElementById('count-a').textContent = data.lineA.length;
@@ -268,7 +268,7 @@ async function main() {
   const seqRes = await pool.request().query(`
     SELECT TOP 1 [Secuencia]
     FROM [dbo].[Orden_Produccion]
-    WHERE [Puesto] = 'DL01'
+    WHERE [Puesto] IN ('DL01', 'DR01')
     ORDER BY [Fecha_Proceso] DESC, [ID_OrdenProduccion] DESC
   `);
   const lastSeq = seqRes.recordset[0]?.Secuencia ?? 100;
@@ -291,7 +291,7 @@ async function main() {
     const res = await req.query(`
       SELECT COUNT(*) AS total
       FROM [dbo].[Orden_Produccion]
-      WHERE [Puesto] = 'DL01'
+      WHERE [Puesto] IN ('DL01', 'DR01')
         ${filter}
         AND [Estado] IN (0, 1)
     `);
@@ -322,11 +322,13 @@ async function main() {
 
     const inserted = [];
     for (const r of rows) {
+      const puesto = r.mano === 'RH' ? 'DR01' : 'DL01';
       const req = pool
         .request()
         .input('sec', sql.Int, seq)
         .input('fecha', sql.VarChar(19), r.fecha)
         .input('sd', sql.VarChar(20), sd)
+        .input('puesto', sql.VarChar(20), puesto)
         .input('estado', sql.Int, r.estado)
         .input('mano', sql.VarChar(10), r.mano)
         .input('pos', sql.VarChar(10), r.pos);
@@ -339,12 +341,12 @@ async function main() {
           ? `
             INSERT INTO [dbo].[Orden_Produccion] ([ID_OrdenCliente], [Secuencia], [Fecha_Proceso], [SD], [Puesto], [Estado], [Mano], [Posicion])
             OUTPUT INSERTED.[ID_OrdenProduccion]
-            VALUES (@ordenCliente, @sec, CAST(@fecha AS DATETIME), @sd, 'DL01', @estado, @mano, @pos);
+            VALUES (@ordenCliente, @sec, CAST(@fecha AS DATETIME), @sd, @puesto, @estado, @mano, @pos);
           `
           : `
             INSERT INTO [dbo].[Orden_Produccion] ([Secuencia], [Fecha_Proceso], [SD], [Puesto], [Estado], [Mano], [Posicion])
             OUTPUT INSERTED.[ID_OrdenProduccion]
-            VALUES (@sec, CAST(@fecha AS DATETIME), @sd, 'DL01', @estado, @mano, @pos);
+            VALUES (@sec, CAST(@fecha AS DATETIME), @sd, @puesto, @estado, @mano, @pos);
           `,
       );
       const id = res.recordset[0].ID_OrdenProduccion;
@@ -371,7 +373,7 @@ async function main() {
       .query(`
         SELECT [ID_OrdenProduccion], [Secuencia], [SD], [Estado], [Mano], [Posicion]
         FROM [dbo].[Orden_Produccion]
-        WHERE [Puesto] = 'DL01'
+        WHERE [Puesto] IN ('DL01', 'DR01')
           AND [Fecha_Proceso] > @fechaInicio
           AND [Estado] IN (0, 1)
         ORDER BY [Fecha_Proceso] ASC,
