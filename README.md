@@ -60,7 +60,21 @@ La interfaz debe tener un selector A/B, para indicar en qué línea se encuentra
 
 La base de datos a utilizar es Microsoft SQL Server 2022, y la aplicación debe estar desarrollada con Next.js.
 
-Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`. Las columnas relevantes de la tabla son ID_OrdenProduccion (entero positivo), Secuencia (entero positivo), Fecha_Proceso, SD (string), Puesto (las únicas filas relevantes contienen DL01), Estado (0/1/2/3), Mano (LH/RH), Posicion (FR/RR).
+Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`. Las columnas relevantes de la tabla son las siguientes:
+
+```mermaid
+erDiagram
+    Orden_Produccion {
+        int ID_OrdenProduccion PK
+        int Secuencia "1..999"
+        datetime Fecha_Proceso
+        varchar SD
+        varchar Puesto "DL01 | ..."
+        int Estado "0 (Dobladora pendiente) | 1 (Stock) | 2 (Dobladora OK) | 3 (Stock OK)"
+        varchar Mano "LH | RH"
+        varchar Posicion "FR | RR"
+    }
+```
 
 Si el estado es 0, el panel viene de la etapa anterior de la línea de producción. Si el estado es 1, el panel debe ser tomado del stock de seguridad.
 
@@ -86,7 +100,21 @@ ORDER BY
 
 FECHA_INICIO_EVALUACION es la fecha a partir de la cual se quiere evaluar paneles, una variable que debe ser configurable en la configuración del sistema. Cualquier panel con fecha de proceso anterior a la misma representa producción realizada antes de la implementación del sistema.
 
-La configuración de la aplicación se almacena en la tabla histórica `dbo.DoorPick`, con columnas `ID_DoorPick`, `Fecha_Inicio_Evaluacion`, `FRLH`, `FRRH`, `RRLH`, `RRRH`, `Segundos_Panel_Correcto` y `Fecha_Actualizacion`. Cada guardado inserta una nueva fila y la aplicación utiliza siempre la más reciente (`ORDER BY [Fecha_Actualizacion] DESC, [ID_DoorPick] DESC`).
+La configuración de la aplicación se almacena en la tabla histórica `dbo.DoorPick`. Cada guardado inserta una nueva fila y la aplicación utiliza siempre la más reciente (`ORDER BY [Fecha_Actualizacion] DESC, [ID_DoorPick] DESC`).
+
+```mermaid
+erDiagram
+    DoorPick {
+        int ID_DoorPick PK
+        datetime2 Fecha_Inicio_Evaluacion
+        char FRLH "A | B | NULL"
+        char FRRH "A | B | NULL"
+        char RRLH "A | B | NULL"
+        char RRRH "A | B | NULL"
+        int Segundos_Panel_Correcto "1..300 (default 10)"
+        datetime2 Fecha_Actualizacion
+    }
+```
 
 El flujo de ejecución básico de la aplicación consiste en leer `dbo.Orden_Produccion` con la query especificada anteriormente para obtener todos los paneles pendientes de la línea seleccionada. A medida que el operario toma paneles y los escanea, modifica su columna de estado según corresponda:
 
