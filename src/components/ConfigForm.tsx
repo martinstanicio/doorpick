@@ -158,13 +158,11 @@ export function ConfigForm() {
                             key={opt.label}
                             type="button"
                             onClick={() => handleAssignmentChange(code, opt.value)}
-                            className={`px-4 py-2 font-mono text-xs sm:text-sm font-bold tracking-wider transition-colors cursor-pointer ${
-                              idx > 0 ? 'border-l-2 border-black' : ''
-                            } ${
-                              selected
+                            className={`px-4 py-2 font-mono text-xs sm:text-sm font-bold tracking-wider transition-colors cursor-pointer ${idx > 0 ? 'border-l-2 border-black' : ''
+                              } ${selected
                                 ? 'bg-black text-white'
                                 : 'bg-white text-black hover:bg-neutral-100'
-                            }`}
+                              }`}
                           >
                             {opt.label}
                           </button>
@@ -182,7 +180,7 @@ export function ConfigForm() {
                 htmlFor="fecha-inicio-evaluacion"
                 className="font-mono text-xs font-bold tracking-widest text-neutral-600 uppercase"
               >
-                FECHA_INICIO_EVALUACION
+                Fecha de inicio de evaluación de paneles
               </label>
               <input
                 id="fecha-inicio-evaluacion"

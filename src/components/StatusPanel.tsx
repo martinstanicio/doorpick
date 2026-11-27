@@ -1,6 +1,5 @@
 'use client';
 
-import { IconCircleFilled, IconSquareFilled } from '@tabler/icons-react';
 import type { BoardMode } from '@/lib/board-state';
 import type { PanelItem } from '@/lib/types';
 
@@ -13,21 +12,18 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
   const bannerConfig =
     mode === 'INCORRECT'
       ? {
-          leftText: 'PANEL INCORRECTO',
-          rightText: 'ALERTA',
-          bgClass: 'bg-[#CC0000] text-white',
-        }
+        leftText: 'PANEL INCORRECTO',
+        bgClass: 'bg-[#CC0000] text-white',
+      }
       : mode === 'CORRECT'
         ? {
-            leftText: 'PANEL CORRECTO',
-            rightText: 'OK',
-            bgClass: 'bg-[#15803D] text-white',
-          }
+          leftText: 'PANEL CORRECTO',
+          bgClass: 'bg-[#15803D] text-white',
+        }
         : {
-            leftText: '· ESPERANDO PANEL ·',
-            rightText: 'STANDBY',
-            bgClass: 'bg-white text-black',
-          };
+          leftText: 'ESPERANDO PANEL',
+          bgClass: 'bg-white text-black',
+        };
 
   const renderBottomBox = () => {
     if (!activePanel) {
@@ -71,9 +67,8 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
     const isStock = activePanel.ubicacion === 'STOCK';
     return (
       <div
-        className={`flex-1 p-8 flex flex-col items-center justify-center text-center gap-6 ${
-          isStock ? 'bg-[#FFE600] text-black' : 'bg-white text-black'
-        }`}
+        className={`flex-1 p-8 flex flex-col items-center justify-center text-center gap-6 ${isStock ? 'bg-[#FFE600] text-black' : 'bg-white text-black'
+          }`}
       >
         <span className="font-mono text-xl sm:text-2xl font-bold tracking-widest">
           UBICACIÓN DE EXTRACCIÓN
@@ -90,17 +85,9 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
     <section className="w-full lg:w-[62%] border-4 border-black bg-white flex flex-col min-h-[460px]">
       {/* Top Banner */}
       <div
-        className={`border-b-4 border-black px-5 py-3 flex items-center justify-between gap-4 ${bannerConfig.bgClass}`}
+        className={`border-b-4 border-black px-5 py-3 flex items-center justify-between gap-4 font-mono text-base sm:text-lg font-bold tracking-widest ${bannerConfig.bgClass}`}
       >
-        <div className="inline-flex items-center gap-2.5 font-mono text-base sm:text-lg font-bold tracking-widest">
-          <IconSquareFilled size={16} />
-          <span>{bannerConfig.leftText}</span>
-        </div>
-
-        <div className="inline-flex items-center gap-2 font-mono text-sm sm:text-base font-bold tracking-widest">
-          <IconCircleFilled size={12} />
-          <span>{bannerConfig.rightText}</span>
-        </div>
+        {bannerConfig.leftText}
       </div>
 
       {/* Middle 2-Column Grid (always white) */}

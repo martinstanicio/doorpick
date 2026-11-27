@@ -15,17 +15,8 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
 
   return (
     <section className="w-full lg:w-[38%] flex flex-col gap-3">
-      <div className="border-b-2 border-black pb-2 flex items-center justify-between">
-        <h2 className="font-mono text-sm font-bold tracking-widest uppercase text-black">
-          PRÓXIMOS PANELES
-        </h2>
-        <span className="font-mono text-xs font-bold text-black tabular-nums">
-          {panels.length}
-        </span>
-      </div>
-
       {!activePanel ? (
-        <div className="border-4 border-black bg-white p-6 flex items-center justify-center min-h-[180px]">
+        <div className="border-4 border-black bg-white p-6 flex items-center justify-center h-full">
           <span className="font-mono text-base font-bold tracking-widest text-black">
             SIN PANELES EN COLA
           </span>
@@ -53,11 +44,10 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
               )}
 
               <span
-                className={`px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider border border-black ${
-                  activePanel.ubicacion === 'STOCK'
-                    ? 'bg-[#FFE600] text-black'
-                    : 'bg-white text-black'
-                }`}
+                className={`px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider border border-black ${activePanel.ubicacion === 'STOCK'
+                  ? 'bg-[#FFE600] text-black'
+                  : 'bg-white text-black'
+                  }`}
               >
                 {activePanel.ubicacion}
               </span>
@@ -89,9 +79,8 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
             return (
               <div
                 key={panel.idOrdenProduccion}
-                className={`border-2 border-black px-3.5 py-2.5 flex items-center justify-between gap-2 ${
-                  isStock ? 'bg-[#FFE600]' : 'bg-white'
-                }`}
+                className={`border-2 border-black px-3.5 py-2.5 flex items-center justify-between gap-2 ${isStock ? 'bg-[#FFE600]' : 'bg-white'
+                  }`}
               >
                 <div className="flex items-baseline gap-4">
                   <span className="font-mono text-sm font-bold text-black tabular-nums">
@@ -103,11 +92,10 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
                 </div>
 
                 <span
-                  className={`px-2 py-0.5 font-mono text-xs font-bold tracking-wider ${
-                    isStock
-                      ? 'bg-black text-[#FFE600]'
-                      : 'border border-black bg-white text-black'
-                  }`}
+                  className={`px-2 py-0.5 font-mono text-xs font-bold tracking-wider ${isStock
+                    ? 'bg-black text-[#FFE600]'
+                    : 'border border-black bg-white text-black'
+                    }`}
                 >
                   {panel.ubicacion}
                 </span>
