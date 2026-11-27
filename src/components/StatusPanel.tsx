@@ -38,28 +38,16 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
 
     if (mode === 'INCORRECT') {
       return (
-        <div className="flex-1 bg-[#CC0000] text-white p-8 flex flex-col items-center justify-center text-center gap-6">
-          <span className="font-mono text-2xl sm:text-3xl font-bold tracking-widest">
-            PANEL INCORRECTO
-          </span>
-          <div className="w-48 h-1 bg-white" />
-          <span className="font-sans text-3xl sm:text-5xl font-bold tracking-tight uppercase">
-            ESCANEAR EL PANEL CORRECTO
-          </span>
+        <div className="flex-1 bg-[#CC0000] text-white p-8 flex items-center justify-center text-center font-sans text-3xl sm:text-5xl font-bold tracking-tight uppercase">
+          PANEL INCORRECTO
         </div>
       );
     }
 
     if (mode === 'CORRECT') {
       return (
-        <div className="flex-1 bg-[#15803D] text-white p-8 flex flex-col items-center justify-center text-center gap-6">
-          <span className="font-mono text-2xl sm:text-3xl font-bold tracking-widest">
-            PANEL CORRECTO
-          </span>
-          <div className="w-48 h-1 bg-white" />
-          <span className="font-sans text-4xl sm:text-6xl font-bold tracking-tight uppercase">
-            PANEL VERIFICADO
-          </span>
+        <div className="flex-1 bg-[#15803D] text-white p-8 flex items-center justify-center text-center font-sans text-4xl sm:text-6xl font-bold tracking-tight uppercase">
+          PANEL CORRECTO
         </div>
       );
     }
@@ -70,11 +58,7 @@ export function StatusPanel({ activePanel, mode }: StatusPanelProps) {
         className={`flex-1 p-8 flex flex-col items-center justify-center text-center gap-6 ${isStock ? 'bg-[#FFE600] text-black' : 'bg-white text-black'
           }`}
       >
-        <span className="font-mono text-xl sm:text-2xl font-bold tracking-widest">
-          UBICACIÓN DE EXTRACCIÓN
-        </span>
-        <div className="w-48 h-1 bg-black" />
-        <span className="font-sans text-5xl sm:text-7xl font-bold tracking-tight underline decoration-4 underline-offset-8">
+        <span className="font-sans text-5xl sm:text-7xl font-bold tracking-tight">
           {activePanel.ubicacion}
         </span>
       </div>
