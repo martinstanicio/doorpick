@@ -156,4 +156,18 @@ describe('boardReducer & getVisiblePanels', () => {
     expect(emptyState.queue).toEqual([]);
     expect(emptyState.errorMessage).toBe('Sin pendientes');
   });
+
+  it('getVisiblePanels returns all panels without truncating to 5 in STANDBY and CORRECT modes', () => {
+    const panels = Array.from({ length: 8 }, (_, idx) => makePanel(idx + 1, 'FRLH'));
+    let state = boardReducer(initialBoardState, { type: 'SYNC_QUEUE', queue: panels });
+    expect(getVisiblePanels(state)).toHaveLength(8);
+
+    state = boardReducer(state, {
+      type: 'SCAN_CORRECT',
+      confirmedPanel: panels[0],
+      nextPanels: panels.slice(1),
+    });
+    expect(getVisiblePanels(state)).toHaveLength(8);
+    expect(getVisiblePanels(state)[0].idOrdenProduccion).toBe(1);
+  });
 });

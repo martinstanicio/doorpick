@@ -19,7 +19,7 @@ export interface DoorPickRepository {
   getPendingPanels(
     fechaInicio: string,
     panelCodes: PanelCode[],
-    limit: number
+    limit?: number
   ): Promise<PanelItem[]>;
   markPanelProcessed(
     idOrdenProduccion: number,
@@ -166,17 +166,20 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
   async getPendingPanels(
     fechaInicio: string,
     panelCodes: PanelCode[],
-    limit: number
+    limit?: number
   ): Promise<PanelItem[]> {
-    if (panelCodes.length === 0 || limit <= 0) {
+    if (panelCodes.length === 0 || (limit !== undefined && limit <= 0)) {
       return [];
     }
 
     const pool = await getPool();
     const request = pool
       .request()
-      .input('limit', sql.Int, limit)
       .input('fechaInicio', sql.VarChar(19), fechaInicio);
+
+    if (limit !== undefined) {
+      request.input('limit', sql.Int, limit);
+    }
 
     const panelClauses: string[] = [];
     panelCodes.forEach((code, idx) => {
@@ -188,8 +191,9 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
       panelClauses.push(`([Posicion] = @${posParam} AND [Mano] = @${manoParam})`);
     });
 
+    const topClause = limit !== undefined ? 'TOP (@limit)' : '';
     const result = await request.query<OrdenProduccionRow>(`
-      SELECT TOP (@limit)
+      SELECT ${topClause}
         [ID_OrdenProduccion],
         [Secuencia],
         [Fecha_Proceso],

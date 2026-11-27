@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const queue = await doorPickService.getQueueForLine(line, 5);
+    const queue = await doorPickService.getQueueForLine(line);
     return NextResponse.json(queue, { status: 200 });
   } catch (error) {
     console.error('Error en GET /api/panels:', error);

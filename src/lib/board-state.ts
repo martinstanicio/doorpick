@@ -118,15 +118,15 @@ export function boardReducer(state: BoardState, action: BoardAction): BoardState
 }
 
 /**
- * Returns up to 5 visible panels for the left queue column.
+ * Returns all visible panels for the left queue column.
  * In CORRECT mode, Card 0 is pinned to the confirmedPanel.
  */
 export function getVisiblePanels(state: BoardState): PanelItem[] {
   if (state.mode === 'CORRECT' && state.confirmedPanel) {
-    const rest = state.queue
-      .filter((p) => p.idOrdenProduccion !== state.confirmedPanel!.idOrdenProduccion)
-      .slice(0, 4);
+    const rest = state.queue.filter(
+      (p) => p.idOrdenProduccion !== state.confirmedPanel!.idOrdenProduccion
+    );
     return [state.confirmedPanel, ...rest];
   }
-  return state.queue.slice(0, 5);
+  return state.queue;
 }

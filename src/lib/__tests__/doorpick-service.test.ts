@@ -87,14 +87,14 @@ class InMemoryDoorPickRepository implements DoorPickRepository {
   async getPendingPanels(
     fechaInicio: string,
     panelCodes: PanelCode[],
-    limit: number
+    limit?: number
   ): Promise<PanelItem[]> {
-    if (panelCodes.length === 0 || limit <= 0) {
+    if (panelCodes.length === 0 || (limit !== undefined && limit <= 0)) {
       return [];
     }
     const allowed = new Set(panelCodes);
 
-    const filtered = this.ordenes
+    const sorted = this.ordenes
       .filter((row) => {
         const code = `${row.posicion}${row.mano}` as PanelCode;
         return (
@@ -113,8 +113,9 @@ class InMemoryDoorPickRepository implements DoorPickRepository {
         const manoCmp = a.mano.localeCompare(b.mano);
         if (manoCmp !== 0) return manoCmp;
         return a.idOrdenProduccion - b.idOrdenProduccion;
-      })
-      .slice(0, limit);
+      });
+
+    const filtered = limit !== undefined ? sorted.slice(0, limit) : sorted;
 
     return filtered.map((row) => ({
       idOrdenProduccion: row.idOrdenProduccion,
@@ -267,7 +268,7 @@ describe('doorPickService', () => {
       expect(queue.panels[1].ubicacion).toBe('STOCK');
     });
 
-    it('caps queue at 5 items by default', async () => {
+    it('returns all pending items by default and respects explicit limit', async () => {
       for (let i = 1; i <= 7; i++) {
         repo.seedOrden({
           idOrdenProduccion: 100 + i,
@@ -281,8 +282,11 @@ describe('doorPickService', () => {
         });
       }
       const queue = await service.getQueueForLine('A');
-      expect(queue.panels).toHaveLength(5);
-      expect(queue.panels.map((p) => p.idOrdenProduccion)).toEqual([101, 102, 103, 104, 105]);
+      expect(queue.panels).toHaveLength(7);
+      expect(queue.panels.map((p) => p.idOrdenProduccion)).toEqual([101, 102, 103, 104, 105, 106, 107]);
+
+      const limited = await service.getQueueForLine('A', 3);
+      expect(limited.panels.map((p) => p.idOrdenProduccion)).toEqual([101, 102, 103]);
     });
 
     it('uses latest historical row from dbo.DoorPick overriding older rows', async () => {

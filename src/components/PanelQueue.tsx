@@ -11,10 +11,10 @@ interface PanelQueueProps {
 
 export function PanelQueue({ panels, mode }: PanelQueueProps) {
   const activePanel = panels[0] ?? null;
-  const upcomingPanels = panels.slice(1, 5);
+  const upcomingPanels = panels.slice(1);
 
   return (
-    <section className="w-full lg:w-[38%] flex flex-col gap-3">
+    <section className="w-full lg:w-[38%] lg:h-full lg:min-h-0 flex flex-col gap-3">
       {!activePanel ? (
         <div className="border-4 border-black bg-white p-6 flex items-center justify-center h-full">
           <span className="font-mono text-base font-bold tracking-widest text-black">
@@ -22,10 +22,10 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
           </span>
         </div>
       ) : (
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 lg:h-full lg:min-h-0">
           {/* Card 0: Active */}
           <div
-            className={`border-4 border-black p-4 flex flex-col gap-4 ${activePanel.ubicacion === 'STOCK' ? 'bg-[#FFE600]' : 'bg-[#BBF7D0]'
+            className={`shrink-0 border-4 border-black p-4 flex flex-col gap-4 ${activePanel.ubicacion === 'STOCK' ? 'bg-[#FFE600]' : 'bg-[#BBF7D0]'
               }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -76,35 +76,46 @@ export function PanelQueue({ panels, mode }: PanelQueueProps) {
             </div>
           </div>
 
-          {/* Cards 1-4: Compact */}
-          {upcomingPanels.map((panel) => {
-            const isStock = panel.ubicacion === 'STOCK';
-            return (
-              <div
-                key={panel.idOrdenProduccion}
-                className={`border-2 border-black px-3.5 py-2.5 flex items-center justify-between gap-2 ${isStock ? 'bg-[#FFE600]' : 'bg-white'
-                  }`}
-              >
-                <div className="flex items-baseline gap-4">
-                  <span className="font-mono text-sm font-bold text-black tabular-nums">
-                    SECUENCIA {panel.secuencia}
-                  </span>
-                  <span className="font-mono text-base font-bold text-black">
-                    {panel.codigoPanel}
-                  </span>
-                </div>
+          {/* Cards 1+: Compact */}
+          <div className="relative lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+            <div className="flex flex-col gap-2.5">
+              {upcomingPanels.map((panel) => {
+                const isStock = panel.ubicacion === 'STOCK';
+                return (
+                  <div
+                    key={panel.idOrdenProduccion}
+                    className={`shrink-0 border-2 border-black px-3.5 py-2.5 flex items-center justify-between gap-2 ${isStock ? 'bg-[#FFE600]' : 'bg-white'
+                      }`}
+                  >
+                    <div className="flex items-baseline gap-4">
+                      <span className="font-mono text-sm font-bold text-black tabular-nums">
+                        SECUENCIA {panel.secuencia}
+                      </span>
+                      <span className="font-mono text-base font-bold text-black">
+                        {panel.codigoPanel}
+                      </span>
+                    </div>
 
-                <span
-                  className={`px-2 py-0.5 font-mono text-xs font-bold tracking-wider ${isStock
-                    ? 'bg-black text-[#FFE600]'
-                    : 'border border-black bg-white text-black'
-                    }`}
-                >
-                  {panel.ubicacion}
-                </span>
-              </div>
-            );
-          })}
+                    <span
+                      className={`px-2 py-0.5 font-mono text-xs font-bold tracking-wider ${isStock
+                        ? 'bg-black text-[#FFE600]'
+                        : 'border border-black bg-white text-black'
+                        }`}
+                    >
+                      {panel.ubicacion}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {upcomingPanels.length > 0 && (
+              <div
+                aria-hidden="true"
+                className="hidden lg:block pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-b from-transparent via-white/90 to-white"
+              />
+            )}
+          </div>
         </div>
       )}
     </section>

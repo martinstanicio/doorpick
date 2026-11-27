@@ -205,10 +205,10 @@ export function DoorPickBoard() {
   const activePanel = visiblePanels[0] ?? null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-black">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-white text-black">
       <Header line={line} onSelectLine={handleSelectLine} />
 
-      <main className="flex-1 p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
+      <main className="flex-1 min-h-0 p-4 sm:p-6 flex flex-col-reverse lg:flex-row gap-6">
         <PanelQueue panels={visiblePanels} mode={state.mode} />
         <StatusPanel activePanel={activePanel} mode={state.mode} />
       </main>

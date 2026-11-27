@@ -33,7 +33,7 @@ export function createDoorPickService(repo: DoorPickRepository) {
 
   async function getQueueForLine(
     line: LineId,
-    limit = 5
+    limit?: number
   ): Promise<QueueResponse> {
     const config = await repo.getLatestConfig();
     const panelCodes = getPanelCodesForLine(config.assignments, line);
@@ -53,7 +53,7 @@ export function createDoorPickService(repo: DoorPickRepository) {
     line: LineId,
     rawQr: string
   ): Promise<ScanResponse> {
-    const queue = await getQueueForLine(line, 5);
+    const queue = await getQueueForLine(line);
     if (queue.panels.length === 0) {
       return {
         ok: false,
@@ -103,7 +103,7 @@ export function createDoorPickService(repo: DoorPickRepository) {
       newEstado
     );
 
-    const nextQueue = await getQueueForLine(line, 5);
+    const nextQueue = await getQueueForLine(line);
     if (!updated) {
       if (nextQueue.panels.length === 0) {
         return {
