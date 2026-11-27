@@ -85,3 +85,10 @@ FECHA_INICIO_EVALUACION es la fecha a partir de la cual se quiere evaluar panele
 Aquellas cosas que necesite la aplicación que no se encuentren en la tabla `dbo.Orden_Produccion`, deberán ser almacenadas en una nueva tabla `dbo.DoorPick`.
 
 El flujo de ejecución básico de la aplicación consiste en leer `dbo.Orden_Produccion` con la query especificada anteriormente, para obtener un listado de tanto los paneles ya procesados como los paneles a procesar (los paneles que interesa mostrar son los 5 siguientes). A medida que el operario toma paneles y los escanea, almacenar su ID_OrdenProduccion en `dbo.DoorPick`, para registrar que ya fue procesado y no debe ser incluído en los paneles a mostrar; también se debe guardar la fuente de ese panel: "linea" si proviene de la etapa anterior de la línea de producción, o "stock" si proviene del stock de seguridad.
+
+---
+
+Los aspectos configurables de la aplicación deben ser los siguientes.
+
+- Paneles a procesar (FRLH, FRRH, RRLH, RRRH) por línea A, y paneles a peocesar por línea B, mutuamente exclusivos (un tipo de panel solo puede ser procesado por A, por B, o por ninguna, pero nunca por ambas).
+- La fecha a partir de la cual se desea evaluar paneles, ignorando todos los paneles anteriores a la misma.
