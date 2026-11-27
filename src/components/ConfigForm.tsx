@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { IconArrowLeft, IconCheck } from '@tabler/icons-react';
 import {
+  DEFAULT_PANEL_CORRECTO_SEGUNDOS,
   PANEL_CODES,
   type DoorPickConfig,
   type LineAssignment,
@@ -33,6 +34,9 @@ export function ConfigForm() {
   const [error, setError] = useState<string | null>(null);
 
   const [fechaInicio, setFechaInicio] = useState('');
+  const [segundosPanelCorrecto, setSegundosPanelCorrecto] = useState<string>(
+    String(DEFAULT_PANEL_CORRECTO_SEGUNDOS),
+  );
   const [assignments, setAssignments] = useState<Record<PanelCode, LineAssignment>>({
     FRLH: 'A',
     FRRH: 'A',
@@ -50,6 +54,9 @@ export function ConfigForm() {
         const data: DoorPickConfig = await res.json();
         if (!active) return;
         setFechaInicio(toDatetimeLocalValue(data.fechaInicioEvaluacion));
+        setSegundosPanelCorrecto(
+          String(data.segundosPanelCorrecto ?? DEFAULT_PANEL_CORRECTO_SEGUNDOS),
+        );
         setAssignments(data.assignments);
       } catch {
         if (active) setError('NO SE PUDO CARGAR LA CONFIGURACIÓN');
@@ -82,6 +89,7 @@ export function ConfigForm() {
         body: JSON.stringify({
           fechaInicioEvaluacion: fechaInicio,
           assignments,
+          segundosPanelCorrecto: Number(segundosPanelCorrecto),
         }),
       });
 
@@ -92,6 +100,9 @@ export function ConfigForm() {
 
       const updated: DoorPickConfig = await res.json();
       setFechaInicio(toDatetimeLocalValue(updated.fechaInicioEvaluacion));
+      setSegundosPanelCorrecto(
+        String(updated.segundosPanelCorrecto ?? DEFAULT_PANEL_CORRECTO_SEGUNDOS),
+      );
       setAssignments(updated.assignments);
       setSavedBanner(true);
     } catch (err) {
@@ -191,6 +202,30 @@ export function ConfigForm() {
                 onChange={(e) => {
                   setSavedBanner(false);
                   setFechaInicio(e.target.value);
+                }}
+                className="border-2 border-black bg-white px-4 py-3 font-mono text-base font-bold text-black focus:outline-none"
+              />
+            </section>
+
+            {/* Segundos Panel Correcto */}
+            <section className="flex flex-col gap-2">
+              <label
+                htmlFor="segundos-panel-correcto"
+                className="font-mono text-xs font-bold tracking-widest text-neutral-600 uppercase"
+              >
+                Duración de cartel PANEL CORRECTO (segundos)
+              </label>
+              <input
+                id="segundos-panel-correcto"
+                type="number"
+                min={1}
+                max={300}
+                step={1}
+                required
+                value={segundosPanelCorrecto}
+                onChange={(e) => {
+                  setSavedBanner(false);
+                  setSegundosPanelCorrecto(e.target.value);
                 }}
                 className="border-2 border-black bg-white px-4 py-3 font-mono text-base font-bold text-black focus:outline-none"
               />

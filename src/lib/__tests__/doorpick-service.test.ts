@@ -26,6 +26,7 @@ interface InMemoryConfigRow {
   idDoorPick: number;
   fechaInicioEvaluacion: string;
   assignments: Record<PanelCode, 'A' | 'B' | null>;
+  segundosPanelCorrecto: number;
   fechaActualizacion: string;
 }
 
@@ -44,6 +45,7 @@ class InMemoryDoorPickRepository implements DoorPickRepository {
       idDoorPick: this.nextConfigId++,
       fechaInicioEvaluacion: input.fechaInicioEvaluacion,
       assignments: { ...input.assignments },
+      segundosPanelCorrecto: input.segundosPanelCorrecto,
       fechaActualizacion:
         fechaActualizacion ??
         `2026-11-27T07:00:${String(this.configTick).padStart(2, '0')}`,
@@ -70,6 +72,7 @@ class InMemoryDoorPickRepository implements DoorPickRepository {
       idDoorPick: latest.idDoorPick,
       fechaInicioEvaluacion: latest.fechaInicioEvaluacion,
       assignments: { ...latest.assignments },
+      segundosPanelCorrecto: latest.segundosPanelCorrecto,
       fechaActualizacion: latest.fechaActualizacion,
     };
   }
@@ -80,6 +83,7 @@ class InMemoryDoorPickRepository implements DoorPickRepository {
       idDoorPick: row.idDoorPick,
       fechaInicioEvaluacion: row.fechaInicioEvaluacion,
       assignments: { ...row.assignments },
+      segundosPanelCorrecto: row.segundosPanelCorrecto,
       fechaActualizacion: row.fechaActualizacion,
     };
   }
@@ -161,6 +165,7 @@ describe('doorPickService', () => {
         RRLH: 'B',
         RRRH: 'B',
       },
+      segundosPanelCorrecto: 10,
     });
     service = createDoorPickService(repo);
   });
@@ -240,6 +245,7 @@ describe('doorPickService', () => {
       repo.seedConfig({
         fechaInicioEvaluacion: '2026-11-27T08:00:00',
         assignments: { FRLH: 'A', FRRH: 'A', RRLH: 'A', RRRH: 'A' },
+        segundosPanelCorrecto: 10,
       });
       repo.seedOrden({
         idOrdenProduccion: 12,
@@ -318,6 +324,7 @@ describe('doorPickService', () => {
       await service.saveConfig({
         fechaInicioEvaluacion: '2026-11-27T08:00:00',
         assignments: { FRLH: 'B', FRRH: null, RRLH: null, RRRH: 'A' },
+        segundosPanelCorrecto: 10,
       });
 
       expect((await service.getQueueForLine('A')).panels.map((p) => p.codigoPanel)).toEqual(['RRRH']);
@@ -333,6 +340,7 @@ describe('doorPickService', () => {
           RRLH: code === 'RRLH' ? 'A' : 'B',
           RRRH: code === 'RRRH' ? 'A' : 'B',
         },
+        segundosPanelCorrecto: 10,
       });
 
       const { posicion, mano } = splitPanelCode(code);
@@ -365,6 +373,7 @@ describe('doorPickService', () => {
           RRLH: code === 'RRLH' ? 'A' : 'B',
           RRRH: code === 'RRRH' ? 'A' : 'B',
         },
+        segundosPanelCorrecto: 10,
       });
     });
 
@@ -469,13 +478,16 @@ describe('doorPickService', () => {
       const saved = await service.saveConfig({
         fechaInicioEvaluacion: '2026-11-27T09:15',
         assignments: { FRLH: 'B', FRRH: 'A', RRLH: null, RRRH: 'B' },
+        segundosPanelCorrecto: 5,
       });
 
       expect(repo.configs.length).toBe(initialCount + 1);
       expect(saved.fechaInicioEvaluacion).toBe('2026-11-27T09:15:00');
+      expect(saved.segundosPanelCorrecto).toBe(5);
 
       const latest = await service.getConfig();
       expect(latest.idDoorPick).toBe(saved.idDoorPick);
+      expect(latest.segundosPanelCorrecto).toBe(5);
       expect(latest.assignments).toEqual({
         FRLH: 'B',
         FRRH: 'A',
@@ -489,6 +501,7 @@ describe('doorPickService', () => {
         service.saveConfig({
           fechaInicioEvaluacion: 'invalid-date',
           assignments: { FRLH: 'A', FRRH: 'B', RRLH: null, RRRH: null },
+          segundosPanelCorrecto: 10,
         })
       ).rejects.toThrow();
     });

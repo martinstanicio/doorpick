@@ -14,16 +14,20 @@ export type PanelHand = 'LH' | 'RH';
 
 export type PanelStatusCode = 0 | 1 | 2 | 3;
 
+export const DEFAULT_PANEL_CORRECTO_SEGUNDOS = 10;
+
 export interface DoorPickConfig {
   idDoorPick?: number;
   fechaInicioEvaluacion: string;
   assignments: Record<PanelCode, LineAssignment>;
+  segundosPanelCorrecto: number;
   fechaActualizacion?: string;
 }
 
 export interface DoorPickConfigInput {
   fechaInicioEvaluacion: string;
   assignments: Record<PanelCode, LineAssignment>;
+  segundosPanelCorrecto: number;
 }
 
 export interface PanelItem {

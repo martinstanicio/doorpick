@@ -3,14 +3,18 @@
 import { useCallback, useEffect, useReducer, useRef, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { boardReducer, getVisiblePanels, initialBoardState } from '@/lib/board-state';
-import type { LineId, QueueResponse, ScanResponse } from '@/lib/types';
+import {
+  DEFAULT_PANEL_CORRECTO_SEGUNDOS,
+  type LineId,
+  type QueueResponse,
+  type ScanResponse,
+} from '@/lib/types';
 import { Header } from './Header';
 import { PanelQueue } from './PanelQueue';
 import { StatusPanel } from './StatusPanel';
 
 const STORAGE_KEY = 'doorpick_line';
 const POLL_INTERVAL_MS = 2500;
-const GREEN_HOLD_MS = 5000;
 const SCAN_GAP_RESET_MS = 500;
 
 function parseLineParam(value: string | null): LineId | null {
@@ -48,6 +52,7 @@ export function DoorPickBoard() {
   const [state, dispatch] = useReducer(boardReducer, initialBoardState);
 
   const greenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const greenHoldMsRef = useRef<number>(DEFAULT_PANEL_CORRECTO_SEGUNDOS * 1000);
   const scanBufferRef = useRef<string>('');
   const lastKeyTimeRef = useRef<number>(0);
   const scanInFlightRef = useRef<boolean>(false);
@@ -64,7 +69,7 @@ export function DoorPickBoard() {
     greenTimerRef.current = setTimeout(() => {
       greenTimerRef.current = null;
       dispatch({ type: 'GREEN_TIMER_EXPIRED' });
-    }, GREEN_HOLD_MS);
+    }, greenHoldMsRef.current);
   }, [clearGreenTimer]);
 
   // Persist URL line selection to localStorage
@@ -103,6 +108,8 @@ export function DoorPickBoard() {
         if (!res.ok) return;
         const data: QueueResponse = await res.json();
         if (active) {
+          greenHoldMsRef.current =
+            Math.max(1, data.config.segundosPanelCorrecto ?? DEFAULT_PANEL_CORRECTO_SEGUNDOS) * 1000;
           dispatch({ type: 'SYNC_QUEUE', queue: data.panels });
         }
       } catch {

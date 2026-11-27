@@ -2,6 +2,7 @@ import sql from 'mssql';
 import { getPool } from './db';
 import { formatLocalDateTime, splitPanelCode } from './qr';
 import {
+  DEFAULT_PANEL_CORRECTO_SEGUNDOS,
   DoorPickConfig,
   DoorPickConfigInput,
   LineAssignment,
@@ -35,6 +36,7 @@ interface DoorPickRow {
   FRRH: string | null;
   RRLH: string | null;
   RRRH: string | null;
+  Segundos_Panel_Correcto: number | null;
   Fecha_Actualizacion: Date | string;
 }
 
@@ -72,6 +74,9 @@ function mapConfigRow(row: DoorPickRow): DoorPickConfig {
       RRLH: toLineAssignment(row.RRLH),
       RRRH: toLineAssignment(row.RRRH),
     },
+    segundosPanelCorrecto: Number(
+      row.Segundos_Panel_Correcto ?? DEFAULT_PANEL_CORRECTO_SEGUNDOS
+    ),
     fechaActualizacion: toLocalDateTimeString(row.Fecha_Actualizacion),
   };
 }
@@ -106,6 +111,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
         [FRRH],
         [RRLH],
         [RRRH],
+        [Segundos_Panel_Correcto],
         [Fecha_Actualizacion]
       FROM [dbo].[DoorPick]
       ORDER BY [Fecha_Actualizacion] DESC, [ID_DoorPick] DESC
@@ -128,6 +134,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
       .input('frrh', sql.Char(1), input.assignments.FRRH)
       .input('rrlh', sql.Char(1), input.assignments.RRLH)
       .input('rrrh', sql.Char(1), input.assignments.RRRH)
+      .input('segundosPanelCorrecto', sql.Int, input.segundosPanelCorrecto)
       .query<DoorPickRow>(`
         INSERT INTO [dbo].[DoorPick] (
           [Fecha_Inicio_Evaluacion],
@@ -135,6 +142,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
           [FRRH],
           [RRLH],
           [RRRH],
+          [Segundos_Panel_Correcto],
           [Fecha_Actualizacion]
         )
         OUTPUT
@@ -144,6 +152,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
           INSERTED.[FRRH],
           INSERTED.[RRLH],
           INSERTED.[RRRH],
+          INSERTED.[Segundos_Panel_Correcto],
           INSERTED.[Fecha_Actualizacion]
         VALUES (
           CAST(@fechaInicio AS DATETIME2(0)),
@@ -151,6 +160,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
           @frrh,
           @rrlh,
           @rrrh,
+          @segundosPanelCorrecto,
           SYSDATETIME()
         )
       `);

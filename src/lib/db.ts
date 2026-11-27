@@ -42,6 +42,7 @@ export async function ensureDoorPickSchema(
         [FRRH] CHAR(1) NULL CONSTRAINT [CK_DoorPick_FRRH] CHECK ([FRRH] IN ('A', 'B')),
         [RRLH] CHAR(1) NULL CONSTRAINT [CK_DoorPick_RRLH] CHECK ([RRLH] IN ('A', 'B')),
         [RRRH] CHAR(1) NULL CONSTRAINT [CK_DoorPick_RRRH] CHECK ([RRRH] IN ('A', 'B')),
+        [Segundos_Panel_Correcto] INT NOT NULL CONSTRAINT [DF_DoorPick_SegundosPanelCorrecto] DEFAULT ((10)) CONSTRAINT [CK_DoorPick_SegundosPanelCorrecto] CHECK ([Segundos_Panel_Correcto] >= 1 AND [Segundos_Panel_Correcto] <= 300),
         [Fecha_Actualizacion] DATETIME2(0) NOT NULL CONSTRAINT [DF_DoorPick_FechaActualizacion] DEFAULT SYSDATETIME()
       );
     END

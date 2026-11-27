@@ -189,11 +189,25 @@ export function validateConfigInput(input: DoorPickConfigInput): {
     normalizedAssignments[code] = val;
   }
 
+  const segundos = input.segundosPanelCorrecto;
+  if (
+    typeof segundos !== 'number' ||
+    !Number.isSafeInteger(segundos) ||
+    segundos < 1 ||
+    segundos > 300
+  ) {
+    return {
+      valid: false,
+      error: 'segundosPanelCorrecto debe ser un número entero entre 1 y 300.',
+    };
+  }
+
   return {
     valid: true,
     normalized: {
       fechaInicioEvaluacion: normalizedFecha,
       assignments: normalizedAssignments,
+      segundosPanelCorrecto: segundos,
     },
   };
 }

@@ -150,15 +150,18 @@ describe('validateConfigInput & formatLocalDateTime', () => {
     const res = validateConfigInput({
       fechaInicioEvaluacion: '2026-11-27T08:30',
       assignments: { FRLH: 'A', FRRH: 'B', RRLH: 'A', RRRH: null },
+      segundosPanelCorrecto: 10,
     });
     expect(res.valid).toBe(true);
     expect(res.normalized?.fechaInicioEvaluacion).toBe('2026-11-27T08:30:00');
+    expect(res.normalized?.segundosPanelCorrecto).toBe(10);
   });
 
   it('rejects invalid calendar dates like Feb 30', () => {
     const res = validateConfigInput({
       fechaInicioEvaluacion: '2026-02-30T08:00:00',
       assignments: { FRLH: 'A', FRRH: 'B', RRLH: null, RRRH: null },
+      segundosPanelCorrecto: 10,
     });
     expect(res.valid).toBe(false);
   });
@@ -172,9 +175,35 @@ describe('validateConfigInput & formatLocalDateTime', () => {
         RRLH: null,
         RRRH: null,
       },
+      segundosPanelCorrecto: 10,
     });
     expect(res.valid).toBe(false);
   });
+
+  it.each([0, -1, 2.5, 301, Number.NaN])(
+    'rejects invalid segundosPanelCorrecto (%s)',
+    (segundos) => {
+      const res = validateConfigInput({
+        fechaInicioEvaluacion: '2026-11-27T08:00:00',
+        assignments: { FRLH: 'A', FRRH: 'B', RRLH: null, RRRH: null },
+        segundosPanelCorrecto: segundos,
+      });
+      expect(res.valid).toBe(false);
+    }
+  );
+
+  it.each([1, 10, 300])(
+    'accepts valid segundosPanelCorrecto (%s)',
+    (segundos) => {
+      const res = validateConfigInput({
+        fechaInicioEvaluacion: '2026-11-27T08:00:00',
+        assignments: { FRLH: 'A', FRRH: 'B', RRLH: null, RRRH: null },
+        segundosPanelCorrecto: segundos,
+      });
+      expect(res.valid).toBe(true);
+      expect(res.normalized?.segundosPanelCorrecto).toBe(segundos);
+    }
+  );
 
   it('formats Date to YYYY-MM-DDTHH:mm:ss', () => {
     const d = new Date(2026, 10, 27, 9, 5, 3);
