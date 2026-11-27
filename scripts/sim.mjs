@@ -375,7 +375,7 @@ async function main() {
           AND [Fecha_Proceso] > @fechaInicio
           AND [Estado] IN (0, 1)
         ORDER BY [Fecha_Proceso] ASC,
-          CASE WHEN [Posicion] = 'FR' THEN 0 ELSE 1 END ASC,
+          [Posicion] ASC,
           [Mano] ASC,
           [ID_OrdenProduccion] ASC
       `);

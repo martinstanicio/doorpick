@@ -218,7 +218,7 @@ export class SqlServerDoorPickRepository implements DoorPickRepository {
         AND (${panelClauses.join(' OR ')})
       ORDER BY
         [Fecha_Proceso] ASC,
-        CASE WHEN [Posicion] = 'FR' THEN 0 ELSE 1 END ASC,
+        [Posicion] ASC,
         [Mano] ASC,
         [ID_OrdenProduccion] ASC
     `);
