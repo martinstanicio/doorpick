@@ -73,12 +73,13 @@ SELECT
     [Secuencia],
     [Fecha_Proceso],
     [SD],
+    [Estado],
     [Mano],
     [Posicion]
 FROM [TB-L].[dbo].[Orden_Produccion]
 WHERE Puesto = 'DL01'
   AND [Fecha_Proceso] > @FECHA_INICIO_EVALUACION
-ORDER BY [Secuencia] ASC;
+ORDER BY [Fecha_Proceso] ASC;
 ```
 
 FECHA_INICIO_EVALUACION es la fecha a partir de la cual se quiere evaluar paneles, una variable que debe ser configurable en la configuración del sistema. Cualquier panel con fecha de proceso anterior a la misma representa producción realizada antes de la implementación del sistema.
