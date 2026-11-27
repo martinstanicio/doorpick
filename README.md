@@ -63,5 +63,9 @@ Dividí la pantalla en 2 secciones: la izquierda muestra la lista de paneles a t
 
 La base de datos a utilizar es Microsoft SQL Server 2022, y la aplicación debe estar desarrollada con Next.js.
 
-Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`; ÚNICAMENTE podés LEER esta tabla, nunca escribir en ella.
+Los datos del resto de la línea de producción necesarios para el funcionamiento de la aplicación se encuentran en la tabla `dbo.Orden_Produccion`; ÚNICAMENTE podés LEER esta tabla, nunca escribir en ella. Las columas relevantes de la tabla son Secuencia (entero positivo), Fecha_Proceso, Puesto (las únicas filas relevantes contienen DL01), Estado (0/1), Mano (LH/RH), Posicion (FR/RR).
+
+Si el estado es 0, el panel viene de la etapa anterior de la linea de producción. Si el estado es 1, el panel debe ser tomado del stock de seguridad.
+
+
 Aquellas cosas que necesite la aplicación que no se encuentren en la tabla `dbo.Orden_Produccion`, deberán ser almacenadas en una nueva tabla `dbo.DoorPick`.
